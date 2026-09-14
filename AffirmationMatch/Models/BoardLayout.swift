@@ -21,13 +21,12 @@ enum BoardLayout {
         let spacing = adaptiveSpacing(for: size)
         let columns = CGFloat(GameTuning.columns)
         let rows = CGFloat(GameTuning.rows)
+        let outerInset = min(10, max(5, min(size.width, size.height) * 0.018))
+        let availableWidth = max(0, size.width - outerInset * 2)
+        let availableHeight = max(0, size.height - outerInset * 2)
 
-        let maxCardWidth = (size.width - spacing * (columns - 1)) / columns
-        let maxCardHeight = (size.height - spacing * (rows - 1)) / rows
-
-        let widthUsingHeight = maxCardHeight * GameTuning.cardAspectRatio
-        let cardWidth = min(maxCardWidth, widthUsingHeight)
-        let cardHeight = cardWidth / GameTuning.cardAspectRatio
+        let cardWidth = (availableWidth - spacing * (columns - 1)) / columns
+        let cardHeight = (availableHeight - spacing * (rows - 1)) / rows
 
         let boardWidth = cardWidth * columns + spacing * (columns - 1)
         let boardHeight = cardHeight * rows + spacing * (rows - 1)
@@ -45,7 +44,10 @@ enum BoardLayout {
     }
 
     private static func adaptiveSpacing(for size: CGSize) -> CGFloat {
-        let scaled = min(size.width * 0.014, size.height * 0.032)
-        return min(GameTuning.maximumGridSpacing, max(GameTuning.minimumGridSpacing, max(GameTuning.preferredGridSpacing, scaled)))
+        let scaled = min(size.width * 0.012, size.height * 0.024)
+        return min(
+            GameTuning.maximumGridSpacing,
+            max(GameTuning.minimumGridSpacing, max(GameTuning.preferredGridSpacing, scaled))
+        )
     }
 }

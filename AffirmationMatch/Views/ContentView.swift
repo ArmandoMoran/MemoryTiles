@@ -10,8 +10,9 @@ struct ContentView: View {
         GeometryReader { geometry in
             ZStack {
                 background
+                    .ignoresSafeArea()
 
-                VStack(spacing: 14) {
+                HStack(spacing: 10) {
                     HeaderBarView(
                         moves: viewModel.moves,
                         matchedPairs: viewModel.matchedPairs,
@@ -20,7 +21,7 @@ struct ContentView: View {
                         onRestart: viewModel.startNewGame,
                         onToggleSound: viewModel.toggleSound
                     )
-                    .padding(.top, max(geometry.safeAreaInsets.top, 10))
+                    .frame(width: sidePanelWidth(for: geometry.size))
 
                     GameBoardView(
                         cards: viewModel.cards,
@@ -34,12 +35,12 @@ struct ContentView: View {
                         onRestart: viewModel.startNewGame,
                         moves: viewModel.moves
                     )
-                    .padding(.bottom, max(geometry.safeAreaInsets.bottom, 10))
                 }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 8)
+                .padding(.leading, max(geometry.safeAreaInsets.leading, 8))
+                .padding(.trailing, max(geometry.safeAreaInsets.trailing, 8))
+                .padding(.top, max(geometry.safeAreaInsets.top, 8))
+                .padding(.bottom, max(geometry.safeAreaInsets.bottom, 8))
             }
-            .ignoresSafeArea()
         }
         .onAppear {
             viewModel.configureAccessibility(reduceMotion: accessibilityReduceMotion)
@@ -51,6 +52,10 @@ struct ContentView: View {
         .onChange(of: accessibilityReduceMotion) { _, newValue in
             viewModel.configureAccessibility(reduceMotion: newValue)
         }
+    }
+
+    private func sidePanelWidth(for size: CGSize) -> CGFloat {
+        min(215, max(155, size.width * 0.19))
     }
 
     private var background: some View {

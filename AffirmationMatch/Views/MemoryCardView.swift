@@ -47,45 +47,36 @@ struct MemoryCardView: View {
     }
 
     private func frontFace(in size: CGSize) -> some View {
-        let fontSize = min(size.height * 0.25, size.width * 0.19)
+        let style = PairVisualStyle.palette[card.pairID % PairVisualStyle.palette.count]
+        let fontSize = min(25, max(12, min(size.height * 0.24, size.width * 0.16)))
 
         return RoundedRectangle(cornerRadius: GameTuning.cardCornerRadius, style: .continuous)
             .fill(
                 LinearGradient(
-                    colors: [
-                        Color(red: 0.997, green: 0.991, blue: 0.977),
-                        Color(red: 0.978, green: 0.965, blue: 0.94)
-                    ],
+                    colors: [style.top, style.bottom],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
             )
             .overlay(
                 RoundedRectangle(cornerRadius: GameTuning.cardCornerRadius, style: .continuous)
-                    .stroke(card.isMatched ? Color(red: 0.58, green: 0.81, blue: 0.7) : Color.white.opacity(0.9), lineWidth: 1.2)
+                    .stroke(card.isMatched ? style.accent : Color.white.opacity(0.82), lineWidth: card.isMatched ? 2.4 : 1.2)
             )
-            .overlay(alignment: .topTrailing) {
-                Image(systemName: "sparkles")
-                    .font(.system(size: max(12, size.height * 0.12), weight: .semibold))
-                    .foregroundStyle(Color(red: 0.89, green: 0.74, blue: 0.45))
-                    .padding(10)
-                    .opacity(0.85)
-            }
             .overlay {
                 Text(card.affirmation)
-                    .font(.system(size: fontSize, weight: .semibold, design: .rounded))
-                    .foregroundStyle(Color(red: 0.22, green: 0.29, blue: 0.36))
+                    .font(.system(size: fontSize, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(red: 0.20, green: 0.18, blue: 0.24))
                     .multilineTextAlignment(.center)
-                    .lineLimit(3)
-                    .minimumScaleFactor(0.72)
-                    .padding(.horizontal, size.width * 0.1)
-                    .padding(.vertical, size.height * 0.18)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.68)
+                    .padding(.horizontal, max(8, size.width * 0.07))
+                    .padding(.vertical, max(5, size.height * 0.10))
             }
             .shadow(color: Color(red: 0.28, green: 0.28, blue: 0.34).opacity(0.09), radius: 10, y: 6)
             .overlay {
                 if card.isMatched {
                     RoundedRectangle(cornerRadius: GameTuning.cardCornerRadius, style: .continuous)
-                        .fill(Color(red: 0.73, green: 0.92, blue: 0.82).opacity(GameTuning.matchGlowOpacity))
+                        .stroke(style.accent.opacity(GameTuning.matchGlowOpacity), lineWidth: 5)
                 }
             }
     }
@@ -95,8 +86,9 @@ struct MemoryCardView: View {
             .fill(
                 LinearGradient(
                     colors: [
-                        Color(red: 0.45, green: 0.71, blue: 0.79),
-                        Color(red: 0.27, green: 0.49, blue: 0.64)
+                        Color(red: 0.54, green: 0.90, blue: 0.91),
+                        Color(red: 0.72, green: 0.72, blue: 0.95),
+                        Color(red: 0.98, green: 0.69, blue: 0.78)
                     ],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
@@ -104,26 +96,20 @@ struct MemoryCardView: View {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: GameTuning.cardCornerRadius, style: .continuous)
-                    .stroke(Color.white.opacity(0.28), lineWidth: 1.2)
+                    .stroke(Color.white.opacity(0.72), lineWidth: 1.4)
             )
             .overlay {
-                VStack(spacing: size.height * 0.07) {
-                    Image(systemName: "heart.text.square.fill")
-                        .font(.system(size: min(size.height * 0.26, 22), weight: .semibold))
-                        .foregroundStyle(.white.opacity(0.92))
-
-                    Text("Affirm")
-                        .font(.system(size: min(size.height * 0.15, 14), weight: .bold, design: .rounded))
-                        .foregroundStyle(.white.opacity(0.86))
-                        .tracking(0.8)
-                }
+                Image("SmilingFlowerTileBack")
+                    .resizable()
+                    .scaledToFit()
+                    .padding(max(4, min(size.width, size.height) * 0.075))
             }
             .overlay {
                 RoundedRectangle(cornerRadius: GameTuning.cardCornerRadius - 5, style: .continuous)
-                    .stroke(Color.white.opacity(0.16), lineWidth: 1)
-                    .padding(7)
+                    .stroke(Color.white.opacity(0.28), lineWidth: 1)
+                    .padding(5)
             }
-            .shadow(color: Color(red: 0.11, green: 0.19, blue: 0.28).opacity(0.18), radius: 12, y: 8)
+            .shadow(color: Color(red: 0.30, green: 0.24, blue: 0.42).opacity(0.18), radius: 10, y: 6)
     }
 
     private func accessibilityLabel(isFrontVisible: Bool) -> String {
@@ -137,4 +123,63 @@ struct MemoryCardView: View {
 
         return "Hidden affirmation card"
     }
+}
+
+private struct PairVisualStyle {
+    let top: Color
+    let bottom: Color
+    let accent: Color
+
+    static let palette: [PairVisualStyle] = [
+        PairVisualStyle(
+            top: Color(red: 0.70, green: 0.94, blue: 0.93),
+            bottom: Color(red: 0.52, green: 0.84, blue: 0.84),
+            accent: Color(red: 0.20, green: 0.57, blue: 0.60)
+        ),
+        PairVisualStyle(
+            top: Color(red: 0.75, green: 0.90, blue: 0.99),
+            bottom: Color(red: 0.61, green: 0.79, blue: 0.96),
+            accent: Color(red: 0.28, green: 0.51, blue: 0.78)
+        ),
+        PairVisualStyle(
+            top: Color(red: 0.87, green: 0.81, blue: 0.98),
+            bottom: Color(red: 0.74, green: 0.67, blue: 0.93),
+            accent: Color(red: 0.46, green: 0.35, blue: 0.72)
+        ),
+        PairVisualStyle(
+            top: Color(red: 0.96, green: 0.82, blue: 0.95),
+            bottom: Color(red: 0.88, green: 0.69, blue: 0.88),
+            accent: Color(red: 0.66, green: 0.35, blue: 0.62)
+        ),
+        PairVisualStyle(
+            top: Color(red: 0.99, green: 0.83, blue: 0.88),
+            bottom: Color(red: 0.95, green: 0.69, blue: 0.77),
+            accent: Color(red: 0.74, green: 0.34, blue: 0.46)
+        ),
+        PairVisualStyle(
+            top: Color(red: 1.00, green: 0.82, blue: 0.73),
+            bottom: Color(red: 0.98, green: 0.68, blue: 0.60),
+            accent: Color(red: 0.76, green: 0.34, blue: 0.26)
+        ),
+        PairVisualStyle(
+            top: Color(red: 1.00, green: 0.89, blue: 0.72),
+            bottom: Color(red: 0.98, green: 0.78, blue: 0.58),
+            accent: Color(red: 0.73, green: 0.47, blue: 0.18)
+        ),
+        PairVisualStyle(
+            top: Color(red: 1.00, green: 0.95, blue: 0.70),
+            bottom: Color(red: 0.97, green: 0.87, blue: 0.52),
+            accent: Color(red: 0.66, green: 0.53, blue: 0.12)
+        ),
+        PairVisualStyle(
+            top: Color(red: 0.78, green: 0.95, blue: 0.79),
+            bottom: Color(red: 0.63, green: 0.86, blue: 0.68),
+            accent: Color(red: 0.30, green: 0.60, blue: 0.36)
+        ),
+        PairVisualStyle(
+            top: Color(red: 0.68, green: 0.91, blue: 0.83),
+            bottom: Color(red: 0.52, green: 0.80, blue: 0.74),
+            accent: Color(red: 0.21, green: 0.55, blue: 0.49)
+        )
+    ]
 }

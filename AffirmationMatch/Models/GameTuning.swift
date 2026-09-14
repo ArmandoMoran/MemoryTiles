@@ -6,12 +6,11 @@ enum GameTuning {
     static let cardCount = columns * rows
     static let pairCount = 10
 
-    static let cardAspectRatio: CGFloat = 1.32
     static let cardCornerRadius: CGFloat = 18
 
-    static let minimumGridSpacing: CGFloat = 8
-    static let preferredGridSpacing: CGFloat = 10
-    static let maximumGridSpacing: CGFloat = 14
+    static let minimumGridSpacing: CGFloat = 7
+    static let preferredGridSpacing: CGFloat = 9
+    static let maximumGridSpacing: CGFloat = 12
 
     static let shuffleDuration: Double = 3.35
     static let reducedMotionShuffleDuration: Double = 0.9
@@ -27,15 +26,15 @@ enum GameTuning {
     static let matchGlowOpacity: Double = 0.42
 
     static let affirmations = [
-        "I am loved",
-        "I am enough",
-        "I am smart",
-        "I am strong",
-        "I am kind",
-        "I am brave",
-        "I am capable",
-        "I am worthy",
-        "I am growing every day",
-        "I believe in myself"
+        "I am powerful",
+        "I am fearless",
+        "I am unstoppable",
+        "I stand strong",
+        "I have courage",
+        "I am fierce",
+        "I choose courage",
+        "I own my power",
+        "I rise stronger",
+        "I am bold"
     ]
 }
