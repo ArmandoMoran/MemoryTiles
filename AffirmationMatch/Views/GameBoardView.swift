@@ -2,6 +2,7 @@ import SwiftUI
 
 struct GameBoardView: View {
     let cards: [AffirmationCard]
+    let mode: GameMode
     let introStartedAt: Date
     let introDuration: Double
     let introIsActive: Bool
@@ -9,12 +10,16 @@ struct GameBoardView: View {
     let reduceMotion: Bool
     let canTap: (AffirmationCard) -> Bool
     let onCardTap: (AffirmationCard) -> Void
-    let onRestart: () -> Void
+    let onHome: () -> Void
     let moves: Int
 
     var body: some View {
         GeometryReader { geometry in
-            let metrics = BoardLayout.metrics(in: geometry.size)
+            let metrics = BoardLayout.metrics(
+                in: geometry.size,
+                cardCount: mode.cardCount,
+                columns: mode.columns
+            )
 
             ZStack {
                 boardBackground(frame: metrics.boardFrame)
@@ -29,7 +34,11 @@ struct GameBoardView: View {
                             let frame = metrics.frame(for: index)
                             let pose = pose(for: card, finalFrame: frame, boardSize: geometry.size, elapsed: elapsed)
 
-                            MemoryCardView(card: card, reduceMotion: reduceMotion)
+                            MemoryCardView(
+                                card: card,
+                                cardBackImageName: mode.cardBackImageName,
+                                reduceMotion: reduceMotion
+                            )
                                 .frame(width: metrics.cardSize.width, height: metrics.cardSize.height)
                                 .position(pose.center)
                                 .rotationEffect(.degrees(pose.rotation))
@@ -49,7 +58,11 @@ struct GameBoardView: View {
                 }
 
                 if showWinOverlay {
-                    WinOverlayView(moves: moves, onRestart: onRestart)
+                    WinOverlayView(
+                        moves: moves,
+                        pairCount: mode.pairCount,
+                        onHome: onHome
+                    )
                         .transition(.opacity.combined(with: .scale(scale: 0.96)))
                 }
             }
@@ -89,6 +102,7 @@ struct GameBoardView: View {
             for: card.introOrder,
             elapsed: elapsed,
             duration: introDuration,
+            cardCount: mode.cardCount,
             reduceMotion: reduceMotion
         )
 
@@ -97,6 +111,8 @@ struct GameBoardView: View {
             finalFrame: finalFrame,
             boardSize: boardSize,
             progress: progress,
+            cardCount: mode.cardCount,
+            columns: mode.columns,
             reduceMotion: reduceMotion
         )
     }

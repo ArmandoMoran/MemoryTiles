@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MemoryCardView: View {
     let card: AffirmationCard
+    let cardBackImageName: String
     let reduceMotion: Bool
 
     var body: some View {
@@ -99,7 +100,7 @@ struct MemoryCardView: View {
                     .stroke(Color.white.opacity(0.72), lineWidth: 1.4)
             )
             .overlay {
-                Image("SmilingFlowerTileBack")
+                Image(cardBackImageName)
                     .resizable()
                     .scaledToFit()
                     .padding(max(4, min(size.width, size.height) * 0.075))

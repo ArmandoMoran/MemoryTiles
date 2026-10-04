@@ -2,7 +2,8 @@ import SwiftUI
 
 struct WinOverlayView: View {
     let moves: Int
-    let onRestart: () -> Void
+    let pairCount: Int
+    let onHome: () -> Void
 
     @State private var animateGlow = false
 
@@ -23,7 +24,7 @@ struct WinOverlayView: View {
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(Color(red: 0.85, green: 0.7, blue: 0.35))
 
-                Text("All 10 pairs matched")
+                Text("All \(pairCount) pairs matched")
                     .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(red: 0.21, green: 0.28, blue: 0.36))
 
@@ -31,8 +32,8 @@ struct WinOverlayView: View {
                     .font(.system(size: 18, weight: .medium, design: .rounded))
                     .foregroundStyle(Color(red: 0.35, green: 0.43, blue: 0.49))
 
-                Button(action: onRestart) {
-                    Text("Play Again")
+                Button(action: onHome) {
+                    Text("Choose Another Game")
                         .font(.system(size: 18, weight: .bold, design: .rounded))
                         .foregroundStyle(Color.white)
                         .padding(.horizontal, 28)

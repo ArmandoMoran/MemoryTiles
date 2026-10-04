@@ -2,13 +2,14 @@ import SwiftUI
 
 @MainActor
 final class AffirmationMatchViewModel: ObservableObject {
+    @Published private(set) var activeMode: GameMode?
     @Published private(set) var cards: [AffirmationCard] = []
     @Published private(set) var introStartedAt = Date()
     @Published private(set) var introDuration = GameTuning.shuffleDuration
-    @Published private(set) var introIsActive = true
+    @Published private(set) var introIsActive = false
     @Published private(set) var moves = 0
     @Published private(set) var matchedPairs = 0
-    @Published private(set) var statusMessage = "Shuffling calm affirmations..."
+    @Published private(set) var statusMessage = "Select a game to begin."
     @Published private(set) var showWinOverlay = false
     @Published private(set) var soundEnabled = AudioHapticsManager.shared.soundEnabled
 
@@ -28,13 +29,19 @@ final class AffirmationMatchViewModel: ObservableObject {
         prefersReducedMotion = reduceMotion
     }
 
+    func selectGame(_ mode: GameMode) {
+        activeMode = mode
+        startNewGame()
+    }
+
     func startNewGame() {
+        guard let activeMode else { return }
         cancelTasks()
 
         var deck: [AffirmationCard] = []
-        var introOrders = Array(0..<GameTuning.cardCount).shuffled()
+        var introOrders = Array(0..<activeMode.cardCount).shuffled()
 
-        for (pairID, affirmation) in GameTuning.affirmations.enumerated() {
+        for (pairID, affirmation) in activeMode.phrases.enumerated() {
             deck.append(AffirmationCard(pairID: pairID, affirmation: affirmation, introOrder: introOrders.removeFirst()))
             deck.append(AffirmationCard(pairID: pairID, affirmation: affirmation, introOrder: introOrders.removeFirst()))
         }
@@ -50,7 +57,7 @@ final class AffirmationMatchViewModel: ObservableObject {
         moves = 0
         matchedPairs = 0
         showWinOverlay = false
-        statusMessage = "Shuffling calm affirmations..."
+        statusMessage = "Shuffling affirmations..."
 
         introTask = Task { [weak self] in
             guard let self else { return }
@@ -95,6 +102,19 @@ final class AffirmationMatchViewModel: ObservableObject {
         soundEnabled = audio.soundEnabled
     }
 
+    func returnHome() {
+        cancelTasks()
+        activeMode = nil
+        cards = []
+        introIsActive = false
+        interactionLocked = true
+        firstSelectionID = nil
+        moves = 0
+        matchedPairs = 0
+        showWinOverlay = false
+        statusMessage = "Select a game to begin."
+    }
+
     private func finishIntro() {
         introIsActive = false
         interactionLocked = false
@@ -136,7 +156,7 @@ final class AffirmationMatchViewModel: ObservableObject {
                     self.cards[secondIndex].isMatchAnimating = false
                 }
 
-                if self.matchedPairs == GameTuning.pairCount {
+                if self.matchedPairs == self.activeMode?.pairCount {
                     self.finishGame()
                 } else {
                     self.interactionLocked = false

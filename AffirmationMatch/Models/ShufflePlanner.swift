@@ -12,6 +12,7 @@ enum ShufflePlanner {
         for introOrder: Int,
         elapsed: Double,
         duration: Double,
+        cardCount: Int,
         reduceMotion: Bool
     ) -> Double {
         if reduceMotion {
@@ -19,7 +20,7 @@ enum ShufflePlanner {
         }
 
         let delay = Double(introOrder) * GameTuning.shufflePerCardDelay
-        let travelWindow = max(duration - Double(GameTuning.cardCount - 1) * GameTuning.shufflePerCardDelay, 0.35)
+        let travelWindow = max(duration - Double(cardCount - 1) * GameTuning.shufflePerCardDelay, 0.35)
         return clamp((elapsed - delay) / travelWindow)
     }
 
@@ -28,6 +29,8 @@ enum ShufflePlanner {
         finalFrame: CGRect,
         boardSize: CGSize,
         progress: Double,
+        cardCount: Int,
+        columns: Int,
         reduceMotion: Bool
     ) -> ShufflePose {
         let finalCenter = CGPoint(x: finalFrame.midX, y: finalFrame.midY)
@@ -45,13 +48,14 @@ enum ShufflePlanner {
             )
         }
 
-        let row = introOrder / GameTuning.columns
-        let column = introOrder % GameTuning.columns
-        let rowBias = CGFloat(row) - CGFloat(GameTuning.rows - 1) / 2
-        let columnBias = CGFloat(column) - CGFloat(GameTuning.columns - 1) / 2
+        let rows = Int(ceil(Double(cardCount) / Double(columns)))
+        let row = introOrder / columns
+        let column = introOrder % columns
+        let rowBias = CGFloat(row) - CGFloat(rows - 1) / 2
+        let columnBias = CGFloat(column) - CGFloat(columns - 1) / 2
         let side: CGFloat = introOrder.isMultiple(of: 2) ? -1 : 1
 
-        let phaseAngle = Double(introOrder) / Double(GameTuning.cardCount) * (.pi * 2)
+        let phaseAngle = Double(introOrder) / Double(max(cardCount, 1)) * (.pi * 2)
         let start = CGPoint(
             x: center.x + cos(phaseAngle) * boardSize.width * 0.085,
             y: center.y + sin(phaseAngle * 1.15) * boardSize.height * 0.06

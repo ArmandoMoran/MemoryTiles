@@ -1,12 +1,15 @@
 import SwiftUI
 
 struct HeaderBarView: View {
+    let gameName: String
     let moves: Int
     let matchedPairs: Int
+    let totalPairs: Int
     let statusMessage: String
     let soundEnabled: Bool
     let onRestart: () -> Void
     let onToggleSound: () -> Void
+    let onHome: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
@@ -22,16 +25,29 @@ struct HeaderBarView: View {
                     .foregroundStyle(Color(red: 0.34, green: 0.42, blue: 0.49))
                     .lineLimit(3)
                     .minimumScaleFactor(0.75)
+
+                Text(gameName)
+                    .font(.system(size: 12, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(red: 0.30, green: 0.58, blue: 0.62))
             }
 
             Spacer(minLength: 2)
 
             HStack(spacing: 7) {
                 statPill(title: "Moves", value: "\(moves)")
-                statPill(title: "Pairs", value: "\(matchedPairs)/\(GameTuning.pairCount)")
+                statPill(title: "Pairs", value: "\(matchedPairs)/\(totalPairs)")
             }
 
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
+                Button(action: onHome) {
+                    Image(systemName: "house.fill")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 42)
+                }
+                .buttonStyle(GlassButtonStyle(tint: Color(red: 0.92, green: 0.94, blue: 0.99)))
+                .accessibilityLabel("Return to game selection")
+
                 Button(action: onToggleSound) {
                     Image(systemName: soundEnabled ? "speaker.wave.2.fill" : "speaker.slash.fill")
                         .font(.system(size: 17, weight: .semibold))

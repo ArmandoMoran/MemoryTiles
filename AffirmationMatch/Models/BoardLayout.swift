@@ -4,10 +4,11 @@ struct BoardMetrics {
     let boardFrame: CGRect
     let cardSize: CGSize
     let spacing: CGFloat
+    let columns: Int
 
     func frame(for index: Int) -> CGRect {
-        let row = index / GameTuning.columns
-        let column = index % GameTuning.columns
+        let row = index / columns
+        let column = index % columns
 
         let x = boardFrame.minX + CGFloat(column) * (cardSize.width + spacing)
         let y = boardFrame.minY + CGFloat(row) * (cardSize.height + spacing)
@@ -17,19 +18,19 @@ struct BoardMetrics {
 }
 
 enum BoardLayout {
-    static func metrics(in size: CGSize) -> BoardMetrics {
+    static func metrics(in size: CGSize, cardCount: Int, columns: Int) -> BoardMetrics {
         let spacing = adaptiveSpacing(for: size)
-        let columns = CGFloat(GameTuning.columns)
-        let rows = CGFloat(GameTuning.rows)
+        let columnCount = CGFloat(columns)
+        let rowCount = CGFloat(Int(ceil(Double(cardCount) / Double(columns))))
         let outerInset = min(10, max(5, min(size.width, size.height) * 0.018))
         let availableWidth = max(0, size.width - outerInset * 2)
         let availableHeight = max(0, size.height - outerInset * 2)
 
-        let cardWidth = (availableWidth - spacing * (columns - 1)) / columns
-        let cardHeight = (availableHeight - spacing * (rows - 1)) / rows
+        let cardWidth = (availableWidth - spacing * (columnCount - 1)) / columnCount
+        let cardHeight = (availableHeight - spacing * (rowCount - 1)) / rowCount
 
-        let boardWidth = cardWidth * columns + spacing * (columns - 1)
-        let boardHeight = cardHeight * rows + spacing * (rows - 1)
+        let boardWidth = cardWidth * columnCount + spacing * (columnCount - 1)
+        let boardHeight = cardHeight * rowCount + spacing * (rowCount - 1)
 
         let origin = CGPoint(
             x: (size.width - boardWidth) / 2,
@@ -39,7 +40,8 @@ enum BoardLayout {
         return BoardMetrics(
             boardFrame: CGRect(origin: origin, size: CGSize(width: boardWidth, height: boardHeight)),
             cardSize: CGSize(width: cardWidth, height: cardHeight),
-            spacing: spacing
+            spacing: spacing,
+            columns: columns
         )
     }
 

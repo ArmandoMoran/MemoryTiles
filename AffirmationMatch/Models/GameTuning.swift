@@ -1,11 +1,121 @@
 import CoreGraphics
 
-enum GameTuning {
-    static let columns = 5
-    static let rows = 4
-    static let cardCount = columns * rows
-    static let pairCount = 10
+enum GameModeID: String, Hashable {
+    case power
+    case support
+    case confidence
+    case belief
+    case calm
+}
 
+struct GameMode: Identifiable, Hashable {
+    let id: GameModeID
+    let name: String
+    let cardBackImageName: String
+    let phrases: [String]
+    let columns: Int
+
+    var pairCount: Int { phrases.count }
+    var cardCount: Int { pairCount * 2 }
+    var rows: Int { Int(ceil(Double(cardCount) / Double(columns))) }
+
+    static let all: [GameMode] = [
+        GameMode(
+            id: .power,
+            name: "Power",
+            cardBackImageName: "PowerTileBack",
+            phrases: [
+                "I am powerful",
+                "I am fearless",
+                "I am unstoppable",
+                "I stand strong",
+                "I have courage",
+                "I am fierce",
+                "I choose courage",
+                "I own my power",
+                "I rise stronger",
+                "I am bold"
+            ],
+            columns: 5
+        ),
+        GameMode(
+            id: .support,
+            name: "Support",
+            cardBackImageName: "SupportTileBack",
+            phrases: [
+                "I am not alone",
+                "I trust myself",
+                "I will smile",
+                "I will love",
+                "I will heal",
+                "I am resilient",
+                "I will be comforted",
+                "I will rest",
+                "I am supported",
+                "I choose hope",
+                "I am strong",
+                "I care for myself"
+            ],
+            columns: 6
+        ),
+        GameMode(
+            id: .confidence,
+            name: "Confidence",
+            cardBackImageName: "ConfidenceTileBack",
+            phrases: [
+                "I am prepared",
+                "I got this",
+                "I am focused",
+                "I am ready",
+                "I am capable",
+                "I am calm",
+                "My mind is clear",
+                "My mind is sharp",
+                "I will ROCK this",
+                "I am a superstar"
+            ],
+            columns: 5
+        ),
+        GameMode(
+            id: .belief,
+            name: "Belief",
+            cardBackImageName: "SmilingFlowerTileBack",
+            phrases: [
+                "I am present",
+                "I am calm",
+                "I am capable",
+                "I am focused",
+                "I am loved",
+                "I belong",
+                "I am patient",
+                "I am confident",
+                "I am grateful",
+                "I am enough"
+            ],
+            columns: 5
+        ),
+        GameMode(
+            id: .calm,
+            name: "Calm",
+            cardBackImageName: "CalmTileBack",
+            phrases: [
+                "Breathe",
+                "Focus",
+                "Believe",
+                "Steady now",
+                "Love",
+                "Re-center",
+                "Release the tension",
+                "Stillness",
+                "Slow down",
+                "Let go"
+            ],
+            columns: 5
+        )
+    ]
+}
+
+enum GameTuning {
     static let cardCornerRadius: CGFloat = 18
 
     static let minimumGridSpacing: CGFloat = 7
@@ -24,17 +134,4 @@ enum GameTuning {
 
     static let matchAnimationScale: CGFloat = 1.045
     static let matchGlowOpacity: Double = 0.42
-
-    static let affirmations = [
-        "I am powerful",
-        "I am fearless",
-        "I am unstoppable",
-        "I stand strong",
-        "I have courage",
-        "I am fierce",
-        "I choose courage",
-        "I own my power",
-        "I rise stronger",
-        "I am bold"
-    ]
 }
